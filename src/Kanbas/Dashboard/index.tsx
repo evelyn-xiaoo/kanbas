@@ -8,7 +8,7 @@ export default function Dashboard() {
         <div className="wd-dashboard-course">
           <Link className="wd-dashboard-course-link"
                 to="/Kanbas/Courses/1234/Home">
-            <img src="/images/reactjs.webp" width={200} />
+            <img alt="react-img"src="/images/reactjs.webp" width={200} />
             <div>
               <h5>
                  CS1234 React JS
