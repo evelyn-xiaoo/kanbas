@@ -1,8 +1,7 @@
 import { AiOutlineSearch } from "react-icons/ai";
-import {BsGripVertical, BsPlus} from "react-icons/bs"
+import {BsGripVertical} from "react-icons/bs"
 import { FaPlus } from "react-icons/fa";
 import AssignmentModuleControlButtons from "./AssignmentModuleControlButtons";
-import { MdAssignment } from "react-icons/md";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 
 export default function Assignments() {
