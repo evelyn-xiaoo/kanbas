@@ -30,14 +30,6 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ],
-    "overrides": [
-      {
-        "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
-        "rules": {
-          "no-warning-comments": "off" 
-        }
-      }
     ]
   },
   "browserslist": {
@@ -51,8 +43,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
