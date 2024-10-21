@@ -1,15 +1,24 @@
+import * as db from "../../Database"
+import { useParams } from "react-router";
+import { Link } from "react-router-dom";
+
 export default function AssignmentEditor() {
+  const {aid} = useParams()
+  const assignments = db.assignments;
   return (
     <div id="wd-assignments-editor" className="container mt-4">
       <form>
-        <div className="d-flex align-items-start flex-column w-100">
+        {assignments
+          .filter((assignment: any) => assignment._id === aid)
+          .map((assignment: any) => (
+            <div className="d-flex align-items-start flex-column w-100">
           <div className="mb-3 w-100">
             <label htmlFor="wd-name" className="form-label">Assignment Name</label>
             <div>
               <input
                 id="wd-name"
                 className="form-control"
-                value="A1 - ENV + HTML"
+                value={assignment.title}
               />
             </div>
           </div>
@@ -21,21 +30,21 @@ export default function AssignmentEditor() {
               id="wd-description"
               className="form-control"
               rows={5}
-              defaultValue="The assignment is available online. Submit a link to the landing page of your Web application running on Netlify. The landing page should include the following: Your full name and section Links to each of the lab assignments Link to the Kanbas application Links to all relevant source code repos. The Kanbas application should include a link to navigate back to the landing page."
+              value={assignment.description}
             />
             </div>
           </div>
 
           <div className="d-flex align-items-center flex-row w-100">
-            <label htmlFor="wd-points" className="form-label me-3 w-50 text-end mb-0">Points</label>
-            <div>
-              <input id="wd-points" className="form-control" value={100} />
+            <label htmlFor="wd-points" className="form-label me-3 col-3 text-end mb-0">Points</label>
+            <div className="">
+              <input id="wd-points" className="form-control" value={assignment.points} />
             </div>
           </div>
           <br/>
 
           <div className="d-flex align-items-center flex-row w-100">
-            <label htmlFor="wd-points" className="form-label me-3 w-50 text-end mb-0">Assignment Group</label>
+            <label htmlFor="wd-points" className="form-label me-3 col-3 text-end mb-0">Assignment Group</label>
             <div>
               <select id="wd-assignment-group" className="form-control">
                 <option value="ASSIGNMENTS">ASSIGNMENTS</option>
@@ -45,7 +54,7 @@ export default function AssignmentEditor() {
           <br/>
 
           <div className="d-flex align-items-center flex-row w-100">
-            <label htmlFor="wd-points" className="form-label me-3 w-50 text-end mb-0">Display Grade as</label>
+            <label htmlFor="wd-points" className="form-label me-3 col-3 text-end mb-0">Display Grade as</label>
             <div>
               <select id="wd-assignment-group" className="form-control">
                 <option value="ASSIGNMENTS">Percentage</option>
@@ -55,7 +64,7 @@ export default function AssignmentEditor() {
           <br/>
 
           <div className="d-flex align-items-center flex-row w-100">
-            <label htmlFor="wd-points" className="form-label me-3 w-50 text-end mb-0">Submission Type</label>
+            <label htmlFor="wd-points" className="form-label me-3 col-3 text-end mb-0">Submission Type</label>
             <div className="border w-50 p-4">
               <select id="wd-assignment-group" className="form-control">
                 <option value="ASSIGNMENTS">Online</option>
@@ -89,7 +98,7 @@ export default function AssignmentEditor() {
           <br/>
 
           <div className="d-flex align-items-center flex-row w-100">
-            <label htmlFor="wd-points" className="form-label me-3 w-50 text-end mb-0">Assign</label>
+            <label htmlFor="wd-points" className="form-label me-3 col-3 text-end mb-0">Assign</label>
             <div className="border w-50 p-4">
               <div className="d-flex flex-column w-100">
                 <label className="fw-bold">Assign to</label>
@@ -105,10 +114,10 @@ export default function AssignmentEditor() {
                 <label className="fw-bold">Due</label>
                   <div className="">
                     <input
-                      type="date"
+                      type="datetime-local"
                       id="wd-text-fields-due"
                       className="form-control"
-                      value="2024-05-13"
+                      value={assignment.due}
                     />
                   </div>
               </div>
@@ -119,9 +128,10 @@ export default function AssignmentEditor() {
                   <label className="fw-bold">Available From</label>
                   <div className="">
                     <input
-                      type="date"
+                      type="datetime-local"
                       id="wd-text-fields-available"
                       className="form-control"
+                      value={assignment.available}
                       />
                   </div>
                 </div>
@@ -138,13 +148,13 @@ export default function AssignmentEditor() {
                 </div>
               </div>
             </div>
+            <br/>
+            <div className="d-flex justify-content-end w-100">
+              <Link to={`/Kanbas/Courses/${assignment.course}/Assignments`} className="btn btn-danger">Save</Link>
+              <Link to={`/Kanbas/Courses/${assignment.course}/Assignments`}className="btn">Cancel</Link>
+            </div>
           </div>
-          <br/>
-          
-        <div className="d-flex justify-content-end">
-          <button className="btn btn-danger">Save</button>
-          <button className="btn">Cancel</button>
-        </div>
+        ))}
       </form>
     </div>
   );

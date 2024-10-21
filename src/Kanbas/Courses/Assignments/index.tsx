@@ -3,8 +3,14 @@ import {BsGripVertical} from "react-icons/bs"
 import { FaPlus } from "react-icons/fa";
 import AssignmentModuleControlButtons from "./AssignmentModuleControlButtons";
 import AssignmentControlButtons from "./AssignmentControlButtons";
+import * as db from "../../Database"
+import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Assignments() {
+  const {cid} = useParams();
+  const assignments = db.assignments;
+
     return (
       <div id="wd-assignments" className="p-3">
         <div className="d-flex justify-content-between align-items-center mb-3">
@@ -24,7 +30,7 @@ export default function Assignments() {
             </button>
           </div>
         </div>
-
+        
         <div className="list-group rounded-0 wd-module list-group-item p-0 mb-5 fs-5 border-gray">
           <div className="wd-title p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center w-100">
             <div className="d-flex justify-content-start align-items-center w-60">
@@ -37,63 +43,34 @@ export default function Assignments() {
             </div>
           </div>
           <ul id="wd-assignment-list" className="wd-lessons list-group rounded-0">
-            <li className="d-flex wd-lesson list-group-item ps-1 justify-content-between align-items-center w-100">
+            {assignments
+            .filter((assignment: any) => assignment.course === cid)
+            .map((assignment: any) => (
+            <li className="wd-module list-group-item p-0 border-gray">
+              <li className="d-flex wd-lesson list-group-item ps-1 justify-content-between align-items-center w-100">
               <div className="d-flex align-items-center w-60">
                 <BsGripVertical/>
                 <div className="ms-2">
-                  <a className="wd-assignment-link"
-                  href="#/Kanbas/Courses/1234/Assignments/123">
-                  A1 - ENV + HTML
-                  </a>
-                  <p className="text-muted small">
-                    Multiple Modules | Not available until May 6 at 12:00am | due May 13
-                    at 11:59pm | 100 pts
-                  </p>
-                  
-                </div>
-              </div>
-              <div className="d-flex justify-content-end w-40 ms-2">
-                <AssignmentControlButtons/>
-              </div>
-            </li>
-            <li className="d-flex wd-lesson list-group-item ps-1 justify-content-between align-items-center w-100">
-              <div className="d-flex align-items-center w-60">
-                <BsGripVertical/>
-                <div className="ms-2">
-                  <a className="wd-assignment-link"
-                  href="#/Kanbas/Courses/1234/Assignments/123">
-                  A2 - CSS + BOOTSTRAP
-                  </a>
-                  <p className="text-muted small">
-                    Multiple Modules | Not available until May 13 at 12:00am |
-                    due May 20 at 11:59 | 100 pts
+                  <Link 
+                  className="wd-assignment-link"
+                  to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}
+                  >
+                  {assignment.title}
+                  </Link>
+                  <p className="text-muted small m-0">
+                  Available: {assignment.available} | Due: {assignment.due} | Points: {assignment.points}
                   </p>
                 </div>
               </div>
               <div className="d-flex justify-content-end w-40 ms-2">
                 <AssignmentControlButtons/>
               </div>
+              </li>
             </li>
-            <li className="d-flex wd-lesson list-group-item ps-1 justify-content-between align-items-center w-100">
-              <div className="d-flex align-items-center w-60">
-                <BsGripVertical/>
-                <div className="ms-2">
-                  <a className="wd-assignment-link"
-                  href="#/Kanbas/Courses/1234/Assignments/123">
-                  A3 - JAVASCRIPT + REACT
-                  </a>
-                  <p className="text-muted small">
-                    Multiple Modules | Not available until May 20 at 12:00am |
-                    due May 27 at 11:59 | 100 pts
-                  </p>
-                  
-                </div>
-              </div>
-              <div className="d-flex justify-content-end w-40 ms-2">
-                <AssignmentControlButtons/>
-              </div>
-            </li>
+            ))}
+            
           </ul>
+
         </div>
       </div>
   );}
