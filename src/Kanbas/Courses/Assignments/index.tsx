@@ -1,77 +1,100 @@
-import { AiOutlineSearch } from "react-icons/ai";
-import {BsGripVertical} from "react-icons/bs"
-import { FaPlus } from "react-icons/fa";
-import AssignmentModuleControlButtons from "./AssignmentModuleControlButtons";
+import { useParams } from "react-router";
+import { BsGripVertical } from "react-icons/bs";
 import AssignmentControlButtons from "./AssignmentControlButtons";
-import * as db from "../../Database"
-import { useParams } from "react-router-dom";
+import AssignmentPrefixButtons from "./AssignmentPrefixButtons";
+import React  from "react";
 import { Link } from "react-router-dom";
+import { deleteAssignment}
+    from "./reducer";
+import { useSelector, useDispatch } from "react-redux";
+import AssignmentIndivButtons from "./AssignmentModuleControlButtons";
+import {FaPlus} from "react-icons/fa";
+import ModulesControls from "../Modules/ModulesControls";
+import {addModule} from "../Modules/reducer";
+import LessonControlButtons from "../Modules/LessonControlButtons";
 
 export default function Assignments() {
-  const {cid} = useParams();
-  const assignments = db.assignments;
+    const { cid } = useParams();
+    const assignments = useSelector((state: any) => state.assignmentReducer.assignments);
+    const dispatch = useDispatch();
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+
+
 
     return (
-      <div id="wd-assignments" className="p-3">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div className="position-relative">
-            <AiOutlineSearch className="position-absolute top-50 start-0 translate-middle-y ms-2" />
-            <input id="wd-search-assignment" className="form-control ps-5"
-                placeholder="Search for Assignments" />
-          </div>
-          <div>
-            <button id="wd-add-assignment-btn" className="btn btn-lg btn-danger me-1 float-start">
-              <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
-              Assignment
-            </button>
-            <button id="wd-add-group-btn" className="btn btn-lg btn-white me-1 float-start">
-              <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
-              Group
-            </button>
-          </div>
-        </div>
-        
-        <div className="list-group rounded-0 wd-module list-group-item p-0 mb-5 fs-5 border-gray">
-          <div className="wd-title p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center w-100">
-            <div className="d-flex justify-content-start align-items-center w-60">
-              <BsGripVertical/>
-              <text id="wd-assignments-title" className="mb-0">ASSIGNMENTS</text>
-            </div>
-            <div className="d-flex justify-content-space-between align-items-center w-40">
-              <button className="mb-0 me-4 btn btn-sm btn-secondary border border-white">40% of Total</button>
-              <AssignmentModuleControlButtons />
-            </div>
-          </div>
-          <ul id="wd-assignment-list" className="wd-lessons list-group rounded-0">
-            {assignments
-            .filter((assignment: any) => assignment.course === cid)
-            .map((assignment: any) => (
-            <li className="wd-module list-group-item p-0 border-gray">
-              <li className="d-flex wd-lesson list-group-item ps-1 justify-content-between align-items-center w-100">
-              <div className="d-flex align-items-center w-60">
-                <BsGripVertical/>
-                <div className="ms-2">
-                  <Link 
-                  className="wd-assignment-link"
-                  to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}
-                  >
-                  {assignment.title}
-                  </Link>
-                  <p className="text-muted small m-0">
-                  Available: {assignment.available} | Due: {assignment.due} | Points: {assignment.points}
-                  </p>
-                </div>
-              </div>
-              <div className="d-flex justify-content-end w-40 ms-2">
-                <AssignmentControlButtons/>
-              </div>
-              </li>
-            </li>
-            ))}
-            
-          </ul>
 
-        </div>
-      </div>
-  );}
-  
+        <li className="wd-assignment list-group-item p-0 mb-2 fs-5 border-gray">
+
+            <div className="d-flex justify-content-end mb-2">
+                {currentUser.role === "FACULTY" && ( // Only render ModulesControls if user is FACULTY
+                    <Link
+                        to={`/Kanbas/Courses/${cid}/Assignments/add`}
+                        className="btn btn-danger btn-lg text-decoration-none text-white"
+                    >
+                        <FaPlus className="me-2" />
+                        Assignment
+                    </Link>
+                )}
+            </div>
+
+            <div className="wd-title p-3 ps-2 bg-secondary">
+                <BsGripVertical className="me-2 fs-3" /> Upcoming Assignments <AssignmentControlButtons />
+            </div>
+
+            <ul id="wd-assignments" className="list-group rounded-0">
+                {assignments
+                    .filter((assignment: any) => assignment.course === cid)
+                    .map((assignment: any) => (
+                        <li className="wd-module list-group-item p-0 fs-5 border-gray" key={assignment._id}>
+                            <div className="wd-assignment-list-item p-3 ps-2 wd-lesson">
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <div className="d-flex align-items-center">
+                                        <AssignmentPrefixButtons />
+                                        {currentUser.role === "FACULTY" ? (
+                                            <Link
+                                                to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}
+                                                className="text-decoration-none text-black"
+                                            >
+                                                <span className="ms-2 text-start">{assignment.title}</span>
+                                            </Link>
+                                        ) : (
+                                            <span className="ms-2 text-start">{assignment.title}</span>
+                                        )}
+
+
+                                    </div>
+
+                                    {currentUser.role === "FACULTY" ? (
+                                        <AssignmentIndivButtons assignmentId={assignment._id}
+                                                                deleteAssignment={(assignmentId) => {
+                                                                    dispatch(deleteAssignment(assignmentId));
+                                                                }} />
+                                    ) : (
+                                        <LessonControlButtons/>
+
+                                    )}
+                                </div>
+
+                                <ul className="ms-4 text-wrap txt-caption list-unstyled">
+                                    <li>
+                                        <span className="text-danger">{"Module " + assignment.modules}</span> |{" "}
+                                        <span className="fw-bold">Available:</span> {new Date(assignment.available + 'T00:00:00').toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                    })} at 12:00pm |{" "}
+                                        <span className="fw-bold">Due:</span> {new Date(assignment.due + 'T23:59:59').toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                    })} at 11:59pm |{" "}
+                                        <span className="fw-bold">{assignment.points} pts</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    ))}
+            </ul>
+        </li>
+    );
+}
