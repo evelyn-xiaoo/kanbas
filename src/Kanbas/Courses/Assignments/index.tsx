@@ -2,31 +2,41 @@ import { useParams } from "react-router";
 import { BsGripVertical } from "react-icons/bs";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import AssignmentPrefixButtons from "./AssignmentPrefixButtons";
-import React  from "react";
+import React, {useEffect} from "react";
 import { Link } from "react-router-dom";
-import { deleteAssignment}
+import { deleteAssignment, setAssignment, setAssignments}
     from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import AssignmentIndivButtons from "./AssignmentModuleControlButtons";
 import {FaPlus} from "react-icons/fa";
-import ModulesControls from "../Modules/ModulesControls";
-import {addModule} from "../Modules/reducer";
+import * as assignmentsClient from "./client";
 import LessonControlButtons from "../Modules/LessonControlButtons";
+import * as coursesClient from "../client";
+
 
 export default function Assignments() {
     const { cid } = useParams();
     const assignments = useSelector((state: any) => state.assignmentReducer.assignments);
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const removeAssignment = async (assignmentId: string) => {
+        await assignmentsClient.deleteAssignment(assignmentId);
+        dispatch(deleteAssignment(assignmentId));
+    };
 
-
+    const fetchAssignments = async () => {
+        const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+        dispatch(setAssignments(assignments));
+    };  useEffect(() => {
+        fetchAssignments();
+    }, [])
 
     return (
 
         <li className="wd-assignment list-group-item p-0 mb-2 fs-5 border-gray">
 
             <div className="d-flex justify-content-end mb-2">
-                {currentUser.role === "FACULTY" && ( // Only render ModulesControls if user is FACULTY
+                {currentUser.role === "FACULTY" && (
                     <Link
                         to={`/Kanbas/Courses/${cid}/Assignments/add`}
                         className="btn btn-danger btn-lg text-decoration-none text-white"
@@ -43,7 +53,6 @@ export default function Assignments() {
 
             <ul id="wd-assignments" className="list-group rounded-0">
                 {assignments
-                    .filter((assignment: any) => assignment.course === cid)
                     .map((assignment: any) => (
                         <li className="wd-module list-group-item p-0 fs-5 border-gray" key={assignment._id}>
                             <div className="wd-assignment-list-item p-3 ps-2 wd-lesson">
@@ -66,9 +75,7 @@ export default function Assignments() {
 
                                     {currentUser.role === "FACULTY" ? (
                                         <AssignmentIndivButtons assignmentId={assignment._id}
-                                                                deleteAssignment={(assignmentId) => {
-                                                                    dispatch(deleteAssignment(assignmentId));
-                                                                }} />
+                                                                deleteAssignment={(assignmentId) => removeAssignment(assignmentId)} />
                                     ) : (
                                         <LessonControlButtons/>
 

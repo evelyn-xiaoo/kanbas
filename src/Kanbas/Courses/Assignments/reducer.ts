@@ -2,60 +2,54 @@ import { createSlice } from "@reduxjs/toolkit";
 import { assignments } from "../../Database";
 
 const initialState = {
-    assignments: assignments,
+    assignments: [] as any[],
+    assignment: {
+        title: "Assignment",
+        description: "Description",
+        points: 100,
+        due: "2024-11-13",
+        modules: 1,
+        available: "2024-11-13",
+    },
 };
 const assignmentsSlice = createSlice({
     name: "assignments",
     initialState,
     reducers: {
-        addAssignment: (state, { payload: assignment }) => {
-            const newAssignment: any = {
-                _id: `${Date.now()}`,  // Example of generating a unique ID
-                title: assignment.title,
-                course: assignment.course,
-                points: assignment.points,
-                due: assignment.due,
-                available: assignment.available,
-                description: assignment.description,
-                modules: assignment.modules,
-            };
-            state.assignments.push(newAssignment);
+        addAssignment: (state, action) => {
+            state.assignments = [
+                { ...action.payload, _id: new Date().getTime().toString() },
+                ...state.assignments,
+            ];
+
         },
         deleteAssignment: (state, { payload: assignmentId }) => {
             state.assignments = state.assignments.filter(
                 (a: any) => a._id !== assignmentId);
         },
-        updateAssignment: (state, { payload: updatedAssignment }) => {
-            state.assignments = state.assignments.map((assignment: any) => {
-                if (assignment._id === updatedAssignment._id) {
-                    const availableDate = new Date(updatedAssignment.available);
-                    const dueDate = new Date(updatedAssignment.due);
-
-                    // Format directly to string to avoid timezone shifts
-                    const formattedAvailableDate = availableDate.toISOString().split('T')[0];
-                    const formattedDueDate = dueDate.toISOString().split('T')[0];
-
-                    return {
-                        ...assignment,
-                        ...updatedAssignment,
-                        available: formattedAvailableDate,
-                        due: formattedDueDate
-                    };
+        updateAssignment: (state, action) => {
+            state.assignments = state.assignments.map((assignment) => {
+                if (assignment._id === action.payload._id) {
+                    return action.payload;
+                } else {
+                    return assignment;
                 }
-                return assignment;
             });
         },
-
-
 
         editAssignment: (state, { payload: assignmentId }) => {
             state.assignments = state.assignments.map((a: any) =>
                 a._id === assignmentId ? { ...a, editing: true } : a
             ) as any;
         },
+        setAssignment: (state, action) => {
+            state.assignment = action.payload;
+        },
+        setAssignments: (state, action) => {
+            state.assignments = action.payload;
+        },
     },
 });
-export const { addAssignment, deleteAssignment, updateAssignment, editAssignment } =
+export const { addAssignment, deleteAssignment, setAssignments, updateAssignment, editAssignment, setAssignment } =
     assignmentsSlice.actions;
 export default assignmentsSlice.reducer;
-
