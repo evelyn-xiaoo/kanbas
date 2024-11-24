@@ -1,9 +1,16 @@
 import { IoEllipsisVertical } from "react-icons/io5";
-import GreenCheckmark from "./GreenCheckmark";
+import { BsPlus } from "react-icons/bs";
+import GreenCheckmark from "../Modules/GreenCheckmark";
+import {FaPlus} from "react-icons/fa6";
+
 export default function AssignmentControlButtons() {
-  return (
-    <div className="d-flex justify-content-start align-content-center float-end">
-      <GreenCheckmark />
-      <IoEllipsisVertical className="fs-4" />
-    </div>
-);}
+    return (
+        <div className="float-end">
+            <button className="btn btn-percentage me-3">
+                50% of Total</button>
+            <GreenCheckmark />
+            <BsPlus className="fs-4 mx-2" />
+            <IoEllipsisVertical className="fs-4" />
+        </div>
+    );
+}

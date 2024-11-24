@@ -6,12 +6,15 @@ import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/editor";
 import PeopleTable from "./People/Table";
 import { FaAlignJustify } from "react-icons/fa";
-import {courses} from "../Database"
+import { addAssignment } from "./Assignments/reducer";
 
-export default function Courses() {
-    const {cid} = useParams();
+export default function Courses(
+    { courses }: { courses: any[]; }
+) {
+    const {cid, aid} = useParams();
     const course = courses.find((course) => course._id === cid);
     const {pathname} = useLocation();
+
 
     return (
         <div id="wd-courses">
@@ -30,7 +33,15 @@ export default function Courses() {
                         <Route path="Home" element={<Home />} />
                         <Route path="Modules" element={<Modules />} />
                         <Route path="Assignments" element={<Assignments />} />
-                        <Route path="Assignments/:aid" element={<AssignmentEditor />} />
+                        
+                        <Route
+                            path="Assignments/:aid"
+                            element={<AssignmentEditor />}
+                        />
+    
+
+                         
+                        
                         <Route path="People" element={<PeopleTable/>}/>
                     </Routes>
                 </div>
