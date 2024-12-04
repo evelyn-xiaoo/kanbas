@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { setCurrentUser } from "./reducer";
 import { useDispatch } from "react-redux";
-import * as db from "../Database";
 import * as client from "./client";
 
 export default function Signin() {
@@ -13,7 +12,7 @@ export default function Signin() {
     const user = await client.signin(credentials);
     if (!user) return;
     dispatch(setCurrentUser(user));
-    navigate("/Kanbas/Dashboard");
+    navigate("/Kanbas/Account/Profile");
   };
   return (
     <div id="wd-signin-screen">
