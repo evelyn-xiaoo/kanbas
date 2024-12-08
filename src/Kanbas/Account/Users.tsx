@@ -3,13 +3,34 @@ import { useParams } from "react-router";
 import PeopleTable from "../Courses/People/Table";
 import * as client from "./client";
 import { FaPlus } from "react-icons/fa";
+import { error } from "console";
+
+
 export default function Users() {
  const [users, setUsers] = useState<any[]>([]);
- 
- const { uid } = useParams();
  const [role, setRole] = useState("");
  const [name, setName] = useState("");
- const filterUsersByName = async (name: string) => {
+ 
+ const createUser = async () => {
+    const user = {
+      firstName: "New",
+      lastName: `User${users.length + 1}`,
+      username: `newuser${Date.now()}`,
+      password: "password123",
+      email: `email${users.length + 1}@neu.edu`,
+      section: "S101",
+      role: "STUDENT"
+    };
+
+    try {
+      await client.createUser(user)
+      setUsers([...users, user]);
+    } catch {
+    }
+    
+  };
+
+  const filterUsersByName = async (name: string) => {
     setName(name);
     if (name) {
       const users = await client.findUsersByPartialName(name);
@@ -19,7 +40,7 @@ export default function Users() {
     }
   };
 
- const filterUsersByRole = async (role: string) => {
+  const filterUsersByRole = async (role: string) => {
     setRole(role);
     if (role) {
       const users = await client.findUsersByRole(role);
@@ -29,30 +50,19 @@ export default function Users() {
     }
   };
 
+ const { uid } = useParams();
  const fetchUsers = async () => {
    const users = await client.findAllUsers();
    setUsers(users);
  };
+
  useEffect(() => {
    fetchUsers();
  }, [uid]);
 
- const createUser = async () => {
-    const user = await client.createUser({
-      firstName: "New",
-      lastName: `User${users.length + 1}`,
-      username: `newuser${Date.now()}`,
-      password: "password123",
-      email: `email${users.length + 1}@neu.edu`,
-      section: "S101",
-      role: "STUDENT",
-    });
-    setUsers([...users, user]);
-  };
-
  return (
    <div>
-     <button onClick={createUser} className="float-end btn btn-danger wd-add-people">
+    <button onClick={createUser} className="float-end btn btn-danger wd-add-people">
         <FaPlus className="me-2" />
         Users
       </button>
@@ -64,7 +74,8 @@ export default function Users() {
         <option value="">All Roles</option>    <option value="STUDENT">Students</option>
         <option value="TA">Assistants</option> <option value="FACULTY">Faculty</option>
         <option value="ADMIN">Administrators</option>
-      </select>
+    </select>
      <PeopleTable users={users} />
    </div>
 );}
+

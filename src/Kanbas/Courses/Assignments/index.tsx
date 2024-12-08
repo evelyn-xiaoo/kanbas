@@ -1,10 +1,10 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { BsGripVertical } from "react-icons/bs";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import AssignmentPrefixButtons from "./AssignmentPrefixButtons";
 import React, {useEffect} from "react";
 import { Link } from "react-router-dom";
-import { deleteAssignment, setAssignment, setAssignments}
+import { deleteAssignment, setAssignment, setAssignments, updateAssignment}
     from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import AssignmentIndivButtons from "./AssignmentModuleControlButtons";
@@ -19,9 +19,16 @@ export default function Assignments() {
     const assignments = useSelector((state: any) => state.assignmentReducer.assignments);
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const navigate = useNavigate();
     const removeAssignment = async (assignmentId: string) => {
         await assignmentsClient.deleteAssignment(assignmentId);
-        dispatch(deleteAssignment(assignmentId));
+        navigate(0);
+        //dispatch(deleteAssignment(assignmentId));
+    };
+
+    const saveAssignment = async (assignment: any) => {
+        await assignmentsClient.updateAssignment(assignment);
+        dispatch(updateAssignment(assignment));
     };
 
     const fetchAssignments = async () => {
@@ -77,7 +84,7 @@ export default function Assignments() {
                                         <AssignmentIndivButtons assignmentId={assignment._id}
                                                                 deleteAssignment={(assignmentId) => removeAssignment(assignmentId)} />
                                     ) : (
-                                        <LessonControlButtons/>
+                                    <LessonControlButtons/>
 
                                     )}
                                 </div>
