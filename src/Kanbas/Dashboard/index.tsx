@@ -54,7 +54,8 @@ export default function Dashboard({
                 >
                     <button className="btn btn-primary float-end"
                             id="wd-add-new-course-click"
-                            onClick={addNewCourse}> Enrollments </button>
+                            //onClick={addNewCourse}
+                            > Enrollments </button>
                 </Link>
 
 

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import * as enrollmentsClient from "./client";
 import * as userClient from "../Account/client";
 import * as coursesClient from "../Courses/client";
+import { useNavigate } from "react-router";
 
 export default function Enroll({
                                    courses,
@@ -12,6 +13,7 @@ export default function Enroll({
     courses: any[];
     setCourses: (courses: any) => void;
 }) {
+    const navigator = useNavigate();
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const { enrollments } = useSelector((state: any) => state.enrollReducer);
@@ -28,7 +30,7 @@ export default function Enroll({
 
     const fetchEnrollments = async () => {
         const enrollments = await userClient.findEnrollmentsForUser(currentUser._id);
-        dispatch(setEnrollments(enrollments));
+        setEnrollments(enrollments);
     };
 
     useEffect(() => {
@@ -38,13 +40,13 @@ export default function Enroll({
             await fetchEnrollments();
         };
         fetchData();
-    }, [currentUser]);
+    }, []);
 
     const isEnrolled = (courseId: string) => {
-        return enrollments.some(
-            (enrollment: { user: any; course: any }) =>
-                enrollment.course === courseId && enrollment.user === currentUser._id
+        const enrolled = enrollments.some(
+            (enrollment: any) => enrollment.user === currentUser._id && enrollment.course === courseId
         );
+        return enrolled;
     };
 
     const handleUnenroll = async (courseId: string) => {
@@ -52,7 +54,6 @@ export default function Enroll({
             (enrollment: any) =>
                 enrollment.user === currentUser._id && enrollment.course === courseId
         );
-
             await enrollmentsClient.deleteEnrollment(enrollment._id);
             dispatch(unenrollCourse(enrollment._id));
             await fetchCourses();
@@ -66,6 +67,18 @@ export default function Enroll({
             course: course_id,
         }
         const enrollment = await userClient.createEnrollment(newEnrollment);
+        dispatch(enrollCourse(enrollment));
+        await fetchCourses();
+    };
+
+    const enrollUser = async (user_id: string, course_id: string) => {
+        const newEnrollment = {
+            _id: new Date().getTime().toString(),
+            user: user_id,
+            course: course_id,
+        }
+        const enrollment = await userClient.createEnrollment(newEnrollment);
+        navigator(-1);
         dispatch(enrollCourse(enrollment));
         await fetchCourses();
     };
@@ -89,8 +102,8 @@ export default function Enroll({
                                             style={{ maxHeight: 100 }}
                                         >
                                             {course.description}
+                                            
                                         </p>
-
                                         {isEnrolled(course._id) ? (
                                             <button
                                                 className="btn btn-danger"
@@ -101,9 +114,9 @@ export default function Enroll({
                                         ) : (
                                             <button
                                                 className="btn btn-success"
-                                                onClick={() => handleEnroll(currentUser._id, course._id)}
+                                                onClick={() => enrollUser(currentUser._id, course._id)}
                                             >
-                                                Enroll
+                                                Enroll 
                                             </button>
                                         )}
                                     </div>
