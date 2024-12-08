@@ -36,7 +36,7 @@ export default function AssignmentEditor() {
     const handleSave = async () => {
         if (pathname.includes("add")){
             if (!cid) return;
-            const newAssignment = await coursesClient.createAssignmentForCourse(cid, assignment);
+            await coursesClient.createAssignmentForCourse(cid, assignment);
             dispatch(addAssignment({...assignment}));
         } else {
             await assignmentsClient.updateAssignment(assignment);

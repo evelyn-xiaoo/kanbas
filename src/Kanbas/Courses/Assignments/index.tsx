@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { deleteAssignment, setAssignment, setAssignments, updateAssignment}
     from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
-import AssignmentIndivButtons from "./AssignmentModuleControlButtons";
+import AssignmentIndivButtons from "./AssignmentIndivButtons";
 import {FaPlus} from "react-icons/fa";
 import * as assignmentsClient from "./client";
 import LessonControlButtons from "../Modules/LessonControlButtons";

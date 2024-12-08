@@ -28,7 +28,13 @@ export default function Dashboard({
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     return (
         <div className="p-4" id="wd-dashboard">
-            <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
+            <h1 id="wd-dashboard-title">Dashboard
+            <button onClick={() => setEnrolling(!enrolling)} className="float-end btn btn-primary" >
+          {enrolling ? "My Courses" : "All Courses"}
+        </button>
+
+            
+            </h1> <hr />
 
             {currentUser.role === "FACULTY" ? (
                 <>
@@ -48,15 +54,11 @@ export default function Dashboard({
                               onChange={(e) => setCourse({ ...course, description: e.target.value }) } /><hr />
                 </>
             ) : (
-                <Link
-                    to={`/Kanbas/Dashboard/Enroll`}
-                    className="text-decoration-none text-black"
-                >
-                    <button className="btn btn-primary float-end"
+                <button className="btn btn-primary float-end"
                             id="wd-add-new-course-click"
-                            //onClick={addNewCourse}
-                            > Enrollments </button>
-                </Link>
+                            onClick={addNewCourse}
+                            > New Course </button>
+                
 
 
             )}
