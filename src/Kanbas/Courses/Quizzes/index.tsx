@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { BsGripVertical } from "react-icons/bs";
 import QuizControlButtons from "./QuizControlButtons";
 import AssignmentPrefixButtons from "../Assignments/AssignmentPrefixButtons";
@@ -16,24 +16,31 @@ import QuizIndivButtons from "./QuizIndivButtons";
 import * as coursesClient from "../client";
 import * as quizzesClient from "./client";
 
+
 export default function Quizzes() {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const { cid } = useParams();
     //const [quizzes, setQuizzes ] = useState<any[]>([]);
     const dispatch = useDispatch();
     //const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const quizzes = useSelector((state: any) => state.quizReducer.quizzes);
-
+    //const quizzes = useSelector((state: any) => state.quizReducer.quizzes);
+    const [quizzes, setQuizzes] = useState<any[]>([]);
+    const navigate = useNavigate();
     useEffect(() => {
         fetchQuizzes();
-    }, []);
+    }, [cid]);
 
     const fetchQuizzes = async() => {
         if(cid) {
             const courseQuizzes = await coursesClient.getQuizzesForCourse(cid);
+            console.log(courseQuizzes.length);
             setQuizzes(courseQuizzes);
         }
-        
+    }
+
+    const deleteQuiz = async(quizId: string) => {
+        await quizzesClient.deleteQuiz(quizId);
+        navigate(0);
     }
 
     return (
@@ -53,7 +60,7 @@ export default function Quizzes() {
             </div>
 
             <div className="wd-title p-3 ps-2 bg-secondary">
-                <BsGripVertical className="me-2 fs-3" /> Quizzes <QuizControlButtons />
+                <BsGripVertical className="me-2 fs-3" /> Quizzes ({quizzes.length}) <QuizControlButtons />
             </div>
 
             <ul id="wd-quizzes" className="list-group rounded-0">
@@ -86,9 +93,7 @@ export default function Quizzes() {
 
                                     {currentUser.role === "FACULTY" ? (
                                         <QuizIndivButtons quizId={quiz._id}
-                                                          deleteQuiz={(quizId) => {
-                                                                    dispatch(deleteQuiz(quizId))
-                                                                }} 
+                                                          deleteQuiz={(quizId) => deleteQuiz(quizId)} 
                                                           courseId = {quiz.course}/>
                                     ) : (
                                         <LessonControlButtons/>

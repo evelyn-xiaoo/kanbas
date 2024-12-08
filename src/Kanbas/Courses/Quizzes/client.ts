@@ -19,14 +19,14 @@ export const deleteQuiz = async (quizId: string) => {
 //     return data;
 //   };
 
-export const findQuizForCourse = async (courseId: string) => {
+export const getQuizzesForCourse = async (courseId: string) => {
 const response = await axiosWithCredentials
-    .get(`${COURSES_API}/${courseId}/quizzes`);
+    .get(`${COURSES_API}/${courseId}/Quizzes`);
 return response.data;
 };
 export const createQuizForCourse = async (courseId: string, module: any) => {
     const response = await axiosWithCredentials
-    .post(`${COURSES_API}/${courseId}/quizzes`,
+    .post(`${COURSES_API}/${courseId}/Quizzes`,
         module
     );
     return response.data;
